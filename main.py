@@ -14,3 +14,7 @@ if __name__ == "__main__":
     print("Data upload started")
     chunk_profiler.upload_files()
     print("Data upload completed")
+
+    print("Data download started")
+    chunk_profiler.download_files()
+    print("Data download completed")
