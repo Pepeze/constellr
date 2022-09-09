@@ -10,3 +10,7 @@ if __name__ == "__main__":
     print("Data generation started")
     chunk_profiler.generate_data()
     print("Data generation completed")
+
+    print("Data upload started")
+    chunk_profiler.upload_files()
+    print("Data upload completed")
