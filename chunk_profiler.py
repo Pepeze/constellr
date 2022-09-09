@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import time
@@ -80,6 +81,14 @@ class ChunkProfiler:
         """Calculate the average download time for each chunk size."""
         for chunk in self.results.values():
             chunk["average_download_time"]: float = round(np.average(chunk["download_times"]), 1)
+
+    def save_results(self):
+        """Save profiling results to a JSON file. Non-serializable data is removed before saving."""
+        for chunk in self.results.values():
+            chunk.pop("zarr_array", None)
+
+        with open("results.json", "w") as output_file:
+            json.dump(self.results, output_file)
 
     def _clean_local_directory(self):
         """Remove the local directory if it exists."""

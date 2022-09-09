@@ -22,3 +22,7 @@ if __name__ == "__main__":
     print("Average calculation started")
     chunk_profiler.calculate_averages()
     print("Average calculation completed")
+
+    print("Result saving started")
+    chunk_profiler.save_results()
+    print("Result saving completed")
