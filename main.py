@@ -18,3 +18,7 @@ if __name__ == "__main__":
     print("Data download started")
     chunk_profiler.download_files()
     print("Data download completed")
+
+    print("Average calculation started")
+    chunk_profiler.calculate_averages()
+    print("Average calculation completed")

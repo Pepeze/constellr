@@ -76,6 +76,11 @@ class ChunkProfiler:
                 )
             chunk["chunk_size_mb"]: float = os.path.getsize(f"{chunk['local_path']}/0.0.0") / 1024**2
 
+    def calculate_averages(self):
+        """Calculate the average download time for each chunk size."""
+        for chunk in self.results.values():
+            chunk["average_download_time"]: float = round(np.average(chunk["download_times"]), 1)
+
     def _clean_local_directory(self):
         """Remove the local directory if it exists."""
         shutil.rmtree(self.local_directory, ignore_errors=True)
