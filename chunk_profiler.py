@@ -5,7 +5,6 @@ import time
 from typing import Any
 
 import numpy as np
-import s3fs
 import zarr
 
 
@@ -25,7 +24,6 @@ class ChunkProfiler:
         self.bucket: str = bucket
         self.iterations: int = iterations
         self.results: dict[str, Any] = {}
-        self.file_system: s3fs.S3FileSystem = s3fs.S3FileSystem(asynchronous=False)
 
     def generate_data(self):
         """Generate chunked zarr arrays and instantiate storage variables."""
@@ -51,7 +49,7 @@ class ChunkProfiler:
         for chunk in self.results.values():
             start_time: float = time.time()
 
-            zarr.save(s3fs.S3Map(chunk["remote_path"], s3=self.file_system), chunk["zarr_array"])
+            zarr.save(chunk["remote_path"], chunk["zarr_array"])
 
             end_time: float = time.time()
             elapsed_time: float = end_time - start_time
@@ -66,7 +64,7 @@ class ChunkProfiler:
                 self._clean_local_directory()
                 start_time: float = time.time()
 
-                zarr_array: zarr.core.Array = zarr.open(s3fs.S3Map(chunk["remote_path"], s3=self.file_system))
+                zarr_array: zarr.core.Array = zarr.open(chunk["remote_path"])
                 zarr.save(chunk["local_path"], zarr_array)
 
                 end_time: float = time.time()
