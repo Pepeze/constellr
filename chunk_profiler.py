@@ -13,6 +13,7 @@ class ChunkProfiler:
         self,
         array_dimensions: tuple[int],
         chunk_shapes: list[tuple[int]],
+        storage_service: str,
         local_directory: str = "downloads",
         bucket: str = "constellr",
         iterations: int = 10,
@@ -20,10 +21,12 @@ class ChunkProfiler:
         """Instantiate object holding data and methods for profiling of zarr downloads."""
         self.array_dimensions: tuple[int] = array_dimensions
         self.chunk_shapes: list[tuple[int]] = chunk_shapes
+        self.storage_service: str = storage_service
         self.local_directory: str = local_directory
         self.bucket: str = bucket
         self.iterations: int = iterations
         self.results: dict[str, Any] = {}
+        print(f"Using object storage service {storage_service}")
 
     def generate_data(self):
         """Generate chunked zarr arrays and instantiate storage variables."""
@@ -33,7 +36,7 @@ class ChunkProfiler:
             number_of_chunks: int = zarr_array.nchunks
             partition: str = f"chunks={number_of_chunks}"
             local_path: str = f"{self.local_directory}/{partition}"
-            remote_path: str = f"s3//{self.bucket}/{partition}"
+            remote_path: str = f"{self.storage_service}://{self.bucket}/{partition}"
 
             self.results[number_of_chunks] = {
                 "zarr_array": zarr_array,
@@ -45,7 +48,7 @@ class ChunkProfiler:
             print(f"Generated data with {zarr_array.nchunks} chunks")
 
     def upload_files(self):
-        """Upload generated chunked zarr arrays to S3 bucket."""
+        """Upload generated chunked zarr arrays to object storage."""
         for chunk in self.results.values():
             start_time: float = time.time()
 
@@ -57,7 +60,7 @@ class ChunkProfiler:
             print(f"Upload of {chunk['partition']} took {round(elapsed_time, 1)} seconds")
 
     def download_files(self):
-        """Download files for each chunk size from S3 bucket. Downloading is repeated for more reliable results."""
+        """Download files for each chunk size from object storage. Downloading is repeated for more reliable results."""
         for chunk in self.results.values():
             chunk["download_times"]: list[int] = []
             for iteration in range(self.iterations):
